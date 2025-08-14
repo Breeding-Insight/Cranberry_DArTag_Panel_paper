@@ -68,36 +68,55 @@ give.n<- function(y) {
   )
 }
 
-png("line_missrate_cranberry2.png",height = 3000,width = 4500,res = 300)
-ggplot(mr_all,aes(x=mr_all$Species,y=mr_all$missrate*100,
-                  fill=mr_all$Species))+geom_boxplot(width=0.5)+ 
-  theme_bw()+ ylim(c(0,120))+
+## jitter
+png("line_missrate_cranberry3.png",height = 3000,width = 4500,res = 300)
+ggplot(mr_all, aes(
+  x = Species,
+  y = missrate * 100,
+  fill = Species
+)) +
+  geom_boxplot(width = 0.5, alpha = 0.7) +
+  geom_beeswarm(
+    data = subset(mr_all, missrate * 100 > 80),
+    aes(color = Species),
+    size = 2, alpha = 0.6, cex = 2
+  ) +
+  
+  geom_text_repel(
+    data = subset(mr_all, missrate * 100 > 80),
+    aes(label = label, color = Species),
+    position = position_beeswarm(cex = 2), 
+    box.padding = 0.35,
+    segment.color = "grey50",
+    segment.size = 0.5,
+    min.segment.length = 0
+  ) +
+  
   geom_hline(yintercept=95,linetype = "dashed",color="red")+
   geom_hline(yintercept=80,linetype = "dashed",color="red")+
   geom_text(aes(x=0,y = 80, label = "80", color = "black"), size = 5, hjust = 0,inherit.aes = FALSE)+
   geom_text(aes(x=0,y = 95, label = "95", color = "black"), size = 5, hjust = 0,inherit.aes = FALSE)+
-  #ggtitle("Sample-based missing rate")+
-  theme(axis.text.x=element_text(angle=20,hjust=1),
-       # plot.title = element_text(hjust = 0.5, size = 20, face = "bold"),
-        #axis.title.x = element_text(face = "bold"), 
-        #axis.title.y = element_text(face = "bold"),
-        legend.position = "none",text = element_text(size = 20))+
-  scale_x_discrete(labels = c("V. macrocarpon (F1; 2x)" =  bquote(" "~italic("V. macrocarpon ")~"(F"["1"]*"; 2x)"),
-                              "V. macrocarpon (diverse; 2x)" = bquote(" "~italic("V. macrocarpon")~"(diverse; 2x)"),
-                              "V. macrocarpon (4x)" = bquote(" "~italic("V. macrocarpon")~"(colchicine-generated; 4x)"),
-                              "V. microcarpum (2x)" = bquote(" "~italic("V. microcarpum")~"(selfed; 2x)"),
-                              "V. oxycoccos (4x)" = bquote(" "~italic("V. oxycoccos")~"(4x)"),
-                              "V. meridionale × V. macrocarpon (2x)" = bquote(" "~italic("V. meridionale × V. macrocarpon")~"(2x)"),
-                              "V. oxycoccos × V. corymbosum (2x)" = bquote(" "~italic("V. oxycoccos × V. corymbosum")~"(2x)"),
-                              "V. corymbosum (4x)" = bquote(" "~italic("V. corymbosum")~"(blueberry; 4x)"),
-                              "V. meridionale (4x)" = bquote(" "~italic("V. meridionale")~"(blueberry; 4x)")
-                              ) )+
-  xlab("")+ ylab("Missing rate (%)")+
-  stat_summary(fun.data = give.n, geom = "text", fun = median)+
-  geom_text_repel(aes(label = mr_all$label),box.padding = 0.35,col="black")
+  scale_x_discrete(labels = c(
+    "V. macrocarpon (F1; 2x)" = bquote(" "~italic("V. macrocarpon ")~"(F"["1"]*"; 2x)"),
+    "V. macrocarpon (diverse; 2x)" = bquote(" "~italic("V. macrocarpon")~"(diverse; 2x)"),
+    "V. macrocarpon (4x)" = bquote(" "~italic("V. macrocarpon")~"(colchicine-generated; 4x)"),
+    "V. microcarpum (2x)" = bquote(" "~italic("V. microcarpum")~"(selfed; 2x)"),
+    "V. oxycoccos (4x)" = bquote(" "~italic("V. oxycoccos")~"(4x)"),
+    "V. meridionale × V. macrocarpon (2x)" = bquote(" "~italic("V. meridionale × V. macrocarpon")~"(2x)"),
+    "V. oxycoccos × V. corymbosum (2x)" = bquote(" "~italic("V. oxycoccos × V. corymbosum")~"(2x)"),
+    "V. corymbosum (4x)" = bquote(" "~italic("V. corymbosum")~"(blueberry; 4x)"),
+    "V. meridionale (4x)" = bquote(" "~italic("V. meridionale")~"(blueberry; 4x)")
+  )) +
+  
+  theme_bw() +ylim(c(0,120))+
+  theme(
+    axis.text.x = element_text(angle = 20, hjust = 1),
+    legend.position = "none",
+    text = element_text(size = 20)
+  )+ xlab("")+ ylab("Missing rate (%)")+
+  stat_summary(fun.data = give.n, geom = "text", fun = median)
+
 dev.off()
-
-
 
 ### marker-level missing rate
 d_sum_all_delete <- d_sum_all[,-grep(pattern = "CNJ16_52_57|CNJ16_52_62",colnames(d_sum_all))]
