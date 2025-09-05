@@ -7,7 +7,8 @@ setwd("~/Desktop/Upoad github for cranberry/PCA")
 
 # Importing the data
 d <- read.csv("DCran23-8178_MADC_rmDupTags_snpID_rename_targetSNP_missrate_delete2F1mixedploidy.csv")
-botloci <- unique(d$CloneID)
+# botloci <- unique(d$CloneID)
+botloci <- fread("Cranberry_unique_alignment_126MAS_3K_54BB_rmDupTags_f180bp.botloci",header=FALSE)
 
 set.seed(2025)
 
